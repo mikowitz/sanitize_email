@@ -14,12 +14,14 @@ class SanitizeEmailTest < Test::Unit::TestCase
   end
 
   def test_send_can_override_recips_cc_bcc_all_independently
+    ActionMailer::Base.use_actual_email_prepended_to_subject = true
     prepare_sanitizations("to_sanitized@email.com", "cc_sanitized@email.com")
     
     tmail = SampleMailer.create_gmail_override
     assert_equal ["to_sanitized@email.com"], tmail.to
     assert_equal ["cc_sanitized@email.com"], tmail.cc
     assert_equal nil,                        tmail.bcc
+    assert_match /^\(to_real@email.com\) /, tmail.subject
   end
   
   def test_to_with_override

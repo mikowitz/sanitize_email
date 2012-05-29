@@ -79,7 +79,7 @@ module NinthBit
           if real_recipients.nil? || !self.class.use_actual_email_prepended_to_subject
             real_subject
           else
-            "(#{real_recipients}) #{real_subject}"
+            "(#{Array(real_recipients).join(',')}) #{real_subject}"
           end
         end
 
@@ -99,8 +99,8 @@ module NinthBit
           return nil if real_addresses.nil?
           return sanitized_addresses if sanitized_addresses.nil? || !self.class.use_actual_email_as_sanitized_user_name
 
-          out = real_addresses.inject([]) do |result, real_recipient|
-            result << sanitized_addresses.map{|sanitized| "#{real_recipient} <#{sanitized}>"}
+          out = Array(real_addresses).inject([]) do |result, real_recipient|
+            result << Array(sanitized_addresses).map{|sanitized| "#{real_recipient} <#{sanitized}>"}
             result
           end.flatten
           return out
